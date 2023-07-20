@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 /**
  * https://cses.fi/problemset/task/1070
- * Should be solve in C++, Java will be TLE
+ * Should be solved in C++, Java will be TLE
  * With Java should use PrintWriter
  */
 public class Problem5 {
