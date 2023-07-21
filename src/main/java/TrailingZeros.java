@@ -12,6 +12,10 @@ public class TrailingZeros {
                 j /= 5;
             }
         }
+
+//        for(long i =5;i<=n;i*=5){
+//            result+=n/i;
+//        }
         return result;
     }
 
