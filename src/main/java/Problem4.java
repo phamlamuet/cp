@@ -20,7 +20,7 @@ public class Problem4 {
         long totalNeedToAdd = 0;
 
         for (int i = 1; i < arr.length; i++) {
-            int needToAdd = arr[i-1] - arr[i];
+            int needToAdd = arr[i - 1] - arr[i];
             if (needToAdd <= 0) {
                 continue;
             } else {
