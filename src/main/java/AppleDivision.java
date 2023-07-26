@@ -18,7 +18,7 @@ public class AppleDivision{
     }
 
     // Recursive function to find the minimum difference between two groups
-    //this is a copied solution and way too hard to understand, so I create a V2 solution
+    //this is a copied solution and way too hard to understand, so I created a V2 solution
     public static void findMinDifference(int[] weights, int idx, int group1Sum, int group2Sum) {
         if (idx == weights.length) {
             int difference = Math.abs(group1Sum - group2Sum);
