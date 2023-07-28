@@ -2,7 +2,10 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
-
+/**
+This is a solution using self-implemented IO.
+It's not mine, btw.
+*/
 public class ConcertTicketV2 {
     static class Reader {
         final private int BUFFER_SIZE = 1 << 16;
