@@ -1,47 +1,50 @@
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
 
-/**
- * I try this problem the first time using HashMap and get TLE -> RestaurantCustomersV2
- */
-public class RestaurantCustomers {
+public class RestaurantCustomersV2 {
     static class Reader {
         final private int BUFFER_SIZE = 1 << 16;
         private DataInputStream din;
         private byte[] buffer;
         private int bufferPointer, bytesRead;
 
-        public Reader() {
+        public Reader()
+        {
             din = new DataInputStream(System.in);
             buffer = new byte[BUFFER_SIZE];
             bufferPointer = bytesRead = 0;
         }
 
-        public Reader(String file_name) throws IOException {
+        public Reader(String file_name) throws IOException
+        {
             din = new DataInputStream(
                     new FileInputStream(file_name));
             buffer = new byte[BUFFER_SIZE];
             bufferPointer = bytesRead = 0;
         }
 
-        public String readLine() throws IOException {
+        public String readLine() throws IOException
+        {
             byte[] buf = new byte[64]; // line length
             int cnt = 0, c;
             while ((c = read()) != -1) {
                 if (c == '\n') {
                     if (cnt != 0) {
                         break;
-                    } else {
+                    }
+                    else {
                         continue;
                     }
                 }
-                buf[cnt++] = (byte) c;
+                buf[cnt++] = (byte)c;
             }
             return new String(buf, 0, cnt);
         }
 
-        public int nextInt() throws IOException {
+        public int nextInt() throws IOException
+        {
             int ret = 0;
             byte c = read();
             while (c <= ' ') {
@@ -59,7 +62,8 @@ public class RestaurantCustomers {
             return ret;
         }
 
-        public long nextLong() throws IOException {
+        public long nextLong() throws IOException
+        {
             long ret = 0;
             byte c = read();
             while (c <= ' ')
@@ -75,7 +79,8 @@ public class RestaurantCustomers {
             return ret;
         }
 
-        public double nextDouble() throws IOException {
+        public double nextDouble() throws IOException
+        {
             double ret = 0, div = 1;
             byte c = read();
             while (c <= ' ')
@@ -99,65 +104,66 @@ public class RestaurantCustomers {
             return ret;
         }
 
-        private void fillBuffer() throws IOException {
+        private void fillBuffer() throws IOException
+        {
             bytesRead = din.read(buffer, bufferPointer = 0,
                     BUFFER_SIZE);
             if (bytesRead == -1)
                 buffer[0] = -1;
         }
 
-        private byte read() throws IOException {
+        private byte read() throws IOException
+        {
             if (bufferPointer == bytesRead)
                 fillBuffer();
             return buffer[bufferPointer++];
         }
 
-        public void close() throws IOException {
+        public void close() throws IOException
+        {
             if (din == null)
                 return;
             din.close();
         }
     }
-
-    String getKey(int a, int b) {
-        return a + "-" + b;
-    }
-
-    HashMap<Integer, Integer> putToMap(int a, int b, HashMap<Integer, Integer> map) {
-        for (int i = a; i < b; i++) {
-//            String key = getKey(i, i + 1);
-            if (map.containsKey(i)) {
-                map.put(i, map.get(i) + 1);
-            } else {
-                map.put(i, 1);
-            }
-        }
-        return map;
-    }
-
-    int solve() throws IOException {
+    public static void main(String[] args) throws IOException {
         Reader reader = new Reader();
         int n = reader.nextInt();
+        List<Customer> customers = new ArrayList<>();
 
-        HashMap<Integer, Integer> intervalsMap = new HashMap<>();
-
-        int a, b;
-        while (n-- > 0) {
-            a = reader.nextInt();
-            b = reader.nextInt();
-            putToMap(a, b, intervalsMap);
+        for (int i = 0; i < n; i++) {
+            int arrivalTime = reader.nextInt();
+            int leavingTime = reader.nextInt();
+            customers.add(new Customer(arrivalTime, true));
+            customers.add(new Customer(leavingTime, false));
         }
 
-        int max = 0;
-        //find max value of each key
-        for (Map.Entry<Integer, Integer> entry : intervalsMap.entrySet())
-            if (entry.getValue() > max) {
-                max = entry.getValue();
+        // Sort the customers based on time (arrival or leaving).
+        Collections.sort(customers, Comparator.comparingInt(a -> a.time));
+
+        int currentCustomers = 0;
+        int maxCustomers = 0;
+
+        // Iterate through sorted events and track the number of customers at each point in time.
+        for (Customer customer : customers) {
+            if (customer.isArrival) {
+                currentCustomers++;
+                maxCustomers = Math.max(maxCustomers, currentCustomers);
+            } else {
+                currentCustomers--;
             }
-        return max;
+        }
+
+        System.out.println(maxCustomers);
     }
 
-    public static void main(String[] args) throws IOException {
-        System.out.println(new RestaurantCustomers().solve());
+    static class Customer {
+        int time;
+        boolean isArrival;
+
+        public Customer(int time, boolean isArrival) {
+            this.time = time;
+            this.isArrival = isArrival;
+        }
     }
 }
