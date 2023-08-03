@@ -2,12 +2,11 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-/**
- * It's not necessary a HashMap, a Set for containing the sequence is good as well
- */
-public class Playlist {
+public class Towers {
     static class Reader {
         final private int BUFFER_SIZE = 1 << 16;
         private DataInputStream din;
@@ -124,41 +123,37 @@ public class Playlist {
     int solve() throws IOException {
         Reader reader = new Reader();
         int n = reader.nextInt();
-        ArrayList<Integer> arrayList = new ArrayList();
-        HashMap<Integer, Integer> map = new HashMap<>();
-        HashMap<Integer, Integer> inMap = new HashMap<>();
-        int max = 1;
-        int count = 1;
-        int f = reader.nextInt();
-        map.put(f, 0);
-        arrayList.add(f);
-        int lastIndex = 0;
-        for (int i = 1; i < n; i++) {
-            int k = reader.nextInt();
-            arrayList.add(k);
-            Integer x = map.get(k);
-            //if map contains the key -> delete all keys from (lastIndex,i) 3 3 3 [3 5] 1 (5)
-            //then update the lastIndex, update the map as well
-            //else -> count++, update the map
-            if (x != null) {
-                for (int j = lastIndex; j <= x; j++) {
-                    map.remove(arrayList.get(j));
-                    count--;
+        TreeMap<Integer, Integer> treeMap = new TreeMap<>();
+        treeMap.put(reader.nextInt(), 1);
+        while (n-- > 1) {
+            int x = reader.nextInt();
+            //we get the next int, we need to add this to an existing tower or create new tower
+            //if this number is bigger than all previous elements => create new one
+            //else we add this to the smallest in the set of bigger element
+            var higherEntry = treeMap.higherEntry(x);
+            if (higherEntry != null) {
+                if (higherEntry.getValue() == 1) {
+                    treeMap.remove(higherEntry.getKey()); //if there is multiple key
+                } else {//there is multiple entry with the same value
+                    treeMap.put(higherEntry.getKey(), higherEntry.getValue() - 1);
                 }
-                lastIndex = x + 1;
             }
-
-            map.put(k, i);
-            count++;
-            if (max < count) {
-                max = count;
+            // treeMap.put(x, 1);
+            if (treeMap.containsKey(x)) {
+                treeMap.put(x, treeMap.get(x) + 1);
+            } else {
+                treeMap.put(x, 1);
             }
         }
-
-        return max;
+        int ans = 0;
+        for (Map.Entry<Integer, Integer> set :
+                treeMap.entrySet()) {
+            ans += set.getValue();
+        }
+        return ans;
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println(new Playlist().solve());
+        System.out.println(new Towers().solve());
     }
 }
