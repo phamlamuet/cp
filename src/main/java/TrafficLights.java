@@ -1,6 +1,7 @@
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -152,12 +153,10 @@ public class TrafficLights {
 
     void solve() throws IOException {
         Reader reader = new Reader();
+        PrintWriter printWriter = new PrintWriter(System.out);
+        StringBuilder output = new StringBuilder("");
         int x = reader.nextInt();
         int n = reader.nextInt();
-        List<Integer> iterations = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            iterations.add(reader.nextInt());
-        }
 
         TreeSet<Integer> trafficLights = new TreeSet<>();
         trafficLights.add(0);
@@ -168,7 +167,8 @@ public class TrafficLights {
         Passage max = new Passage(0, x);
         passages.add(max);
 
-        for (int i : iterations) {
+        for (int j = 0; j < n; j++){
+            int i = reader.nextInt();
             Integer previousTrafficLight = trafficLights.lower(i);
             Integer nextTrafficLight = trafficLights.higher(i);
             trafficLights.add(i);
@@ -194,12 +194,10 @@ public class TrafficLights {
                 passages.remove(new Passage(previousTrafficLight, nextTrafficLight));
             }
 
-            System.out.println(max.length + " ");
+            output.append(max.length).append(" ");
         }
-    }
-
-    boolean isInThisPassage(int start, int end, int x) {
-        return x > start && x < end;
+        printWriter.println(output);
+        printWriter.flush();
     }
 
     public static void main(String[] args) throws IOException {
